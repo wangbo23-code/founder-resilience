@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchWithRetry } from "@/lib/api-retry";
+import { trackAndLog } from "@/lib/cost-tracker";
 
 interface AssessmentInput {
   crisisType: string;
@@ -78,7 +80,8 @@ SITUATION: ${input.situation}
 
 Create a compassionate, practical resilience plan that helps them cope with this crisis while protecting their business.`;
 
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const startTime = Date.now();
+    const res = await fetchWithRetry("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -94,7 +97,7 @@ Create a compassionate, practical resilience plan that helps them cope with this
           { role: "user", content: userPrompt },
         ],
       }),
-    });
+    }, { maxRetries: 2 });
 
     if (!res.ok) {
       console.error("OpenRouter error:", await res.text());
@@ -102,6 +105,7 @@ Create a compassionate, practical resilience plan that helps them cope with this
     }
 
     const json = await res.json();
+    await trackAndLog("founder-resilience", json, model, undefined, Date.now() - startTime);
     const text = json.choices?.[0]?.message?.content ?? "";
     const cleanText = text
       .replace(/```json\n?/g, "")
