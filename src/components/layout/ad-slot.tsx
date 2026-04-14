@@ -1,13 +1,17 @@
 "use client";
 
-import { siteConfig } from "@/lib/config";
-
 /**
- * AdSense ad slot — only renders if adsense.enabled is true in config.
+ * AdSense ad slot — only renders if adsense config exists and is enabled.
  * Usage: <AdSlot /> anywhere you want an ad placeholder.
  */
 export function AdSlot() {
-  if (!siteConfig.adsense.enabled || !siteConfig.adsense.clientId) {
+  // Safe access: old configs may not have adsense field
+  const config = require("@/lib/config").siteConfig;
+  const adsense = (config as Record<string, unknown>).adsense as
+    | { enabled: boolean; clientId: string }
+    | undefined;
+
+  if (!adsense?.enabled || !adsense?.clientId) {
     return null;
   }
 
@@ -16,7 +20,7 @@ export function AdSlot() {
       <ins
         className="adsbygoogle"
         style={{ display: "block" }}
-        data-ad-client={siteConfig.adsense.clientId}
+        data-ad-client={adsense.clientId}
         data-ad-slot="auto"
         data-ad-format="auto"
         data-full-width-responsive="true"

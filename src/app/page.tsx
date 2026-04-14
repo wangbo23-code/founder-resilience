@@ -33,10 +33,10 @@ export default function HomePage() {
         </p>
 
         {/* [V2.0] TOOL TRIAL WIDGET — renders inline if configured */}
-        {siteConfig.trialWidget?.enabled ? (
+        {(siteConfig as any).trialWidget?.enabled ? (
           <div className="max-w-2xl mx-auto mb-8 p-6 border rounded-lg bg-muted/30">
             <p className="text-sm text-muted-foreground mb-3">
-              {siteConfig.trialWidget.prompt}
+              {(siteConfig as any).trialWidget?.prompt}
             </p>
             {/* Placeholder — each product replaces this with its own mini tool form.
                 The actual interactive widget is injected from src/app/tool/trial-widget.tsx
