@@ -8,45 +8,79 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { siteConfig } from "@/lib/config";
+import { getAllPosts } from "@/lib/blog";
 import { ArrowRight, Zap, Shield, Sparkles, CheckCircle } from "lucide-react";
 
 export default function HomePage() {
+  const recentPosts = getAllPosts().slice(0, 3);
+
   return (
     <div className="container mx-auto max-w-5xl px-4">
-      {/* Hero + BLUF */}
-      <section className="py-20 text-center">
+      {/* ============================================================
+          ABOVE THE FOLD — for USERS
+          V2.0: Tool-first. User sees an interactive trial immediately.
+          ============================================================ */}
+
+      <section className="py-16 text-center">
         <Badge variant="secondary" className="mb-4">
           AI-Powered Tool
         </Badge>
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
           {siteConfig.hero.title}
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4">
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
           {siteConfig.hero.subtitle}
         </p>
+
+        {/* [V2.0] TOOL TRIAL WIDGET — renders inline if configured */}
+        {siteConfig.trialWidget?.enabled ? (
+          <div className="max-w-2xl mx-auto mb-8 p-6 border rounded-lg bg-muted/30">
+            <p className="text-sm text-muted-foreground mb-3">
+              {siteConfig.trialWidget.prompt}
+            </p>
+            {/* Placeholder — each product replaces this with its own mini tool form.
+                The actual interactive widget is injected from src/app/tool/trial-widget.tsx
+                via the TrialWidget component slot below. */}
+            <div className="flex gap-2">
+              <Link href="/tool" className="w-full">
+                <Button size="lg" className="w-full">
+                  {siteConfig.hero.cta}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              No signup required for your first try.
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-4 justify-center mb-8">
+            <Link href="/tool">
+              <Button size="lg">
+                {siteConfig.hero.cta}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/pricing">
+              <Button variant="outline" size="lg">
+                View Pricing
+              </Button>
+            </Link>
+          </div>
+        )}
+
         {/* [GEO] BLUF — core definition for AI extraction */}
         {siteConfig.hero.bluf && (
-          <p className="text-base text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
+          <p className="text-base text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             {siteConfig.hero.bluf}
           </p>
         )}
-        <div className="flex gap-4 justify-center">
-          <Link href="/tool">
-            <Button size="lg">
-              {siteConfig.hero.cta}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-          <Link href="/pricing">
-            <Button variant="outline" size="lg">
-              View Pricing
-            </Button>
-          </Link>
-        </div>
-        <p className="text-sm text-muted-foreground mt-4">
-          {siteConfig.credits.freeOnSignup} free uses. No credit card required.
-        </p>
       </section>
+
+      {/* ============================================================
+          BELOW THE FOLD — for GOOGLE / AI SEARCH ENGINES
+          Dense, structured, keyword-rich content for SEO + GEO.
+          ============================================================ */}
 
       {/* [GEO] Use Cases — extractable answer blocks */}
       {siteConfig.useCases.length > 0 && (
@@ -74,6 +108,46 @@ export default function HomePage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* [GEO] Comparison Table — AI search engines' favorite format */}
+      {siteConfig.differentiator.comparisons.length > 0 && (
+        <section className="py-16">
+          <h2 className="text-2xl font-bold text-center mb-4">
+            {siteConfig.differentiator.title}
+          </h2>
+          <p className="text-muted-foreground text-center mb-10 max-w-3xl mx-auto leading-relaxed">
+            {siteConfig.differentiator.content}
+          </p>
+          <div className="max-w-3xl mx-auto overflow-x-auto">
+            <table className="w-full text-sm border">
+              <thead>
+                <tr className="bg-muted/50">
+                  <th className="text-left py-3 px-4 font-semibold border-b">
+                    Feature
+                  </th>
+                  <th className="text-left py-3 px-4 font-semibold border-b">
+                    {siteConfig.name}
+                  </th>
+                  <th className="text-left py-3 px-4 font-semibold border-b">
+                    Alternatives
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {siteConfig.differentiator.comparisons.map((c) => (
+                  <tr key={c.vs} className="border-b">
+                    <td className="py-3 px-4 font-medium">{c.vs}</td>
+                    <td className="py-3 px-4 text-primary">{c.difference}</td>
+                    <td className="py-3 px-4 text-muted-foreground">
+                      {c.vs}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
       )}
@@ -116,40 +190,6 @@ export default function HomePage() {
           </Card>
         </div>
       </section>
-
-      {/* [GEO] Differentiator — answer block for comparison queries */}
-      {siteConfig.differentiator.content && (
-        <section className="py-16">
-          <h2 className="text-2xl font-bold text-center mb-4">
-            {siteConfig.differentiator.title}
-          </h2>
-          <p className="text-muted-foreground text-center mb-10 max-w-3xl mx-auto leading-relaxed">
-            {siteConfig.differentiator.content}
-          </p>
-          {siteConfig.differentiator.comparisons.length > 0 && (
-            <div className="max-w-2xl mx-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 font-semibold">Alternative</th>
-                    <th className="text-left py-3 font-semibold">
-                      {siteConfig.name} Difference
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {siteConfig.differentiator.comparisons.map((c) => (
-                    <tr key={c.vs} className="border-b">
-                      <td className="py-3 text-muted-foreground">{c.vs}</td>
-                      <td className="py-3">{c.difference}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
 
       {/* How It Works */}
       <section className="py-16">
@@ -240,6 +280,41 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* [SEO] Recent Blog Articles — internal links for authority */}
+      {recentPosts.length > 0 && (
+        <section className="py-16">
+          <h2 className="text-2xl font-bold text-center mb-8">
+            Latest Articles
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+            {recentPosts.map((post) => (
+              <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base group-hover:underline">
+                      {post.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {post.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-6">
+            <Link
+              href="/blog"
+              className="text-sm text-muted-foreground hover:underline"
+            >
+              View all articles
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* [GEO] External authority links */}
       {siteConfig.authorityLinks.length > 0 && (

@@ -10,7 +10,7 @@ export const siteConfig = {
   description:
     "FounderResilience is an AI-powered crisis coping tool that helps startup founders and entrepreneurs manage personal struggles like breakups, burnout, and grief while keeping their business running, by generating personalized resilience plans with immediate action steps and week-by-week recovery timelines.",
   // [GEO] Deployed URL, not localhost.
-  url: "https://founder-resilience.vercel.app",
+  url: "https://burnoutfounders.com",
   contactEmail: "support@forgetool.co",
 
   // [GEO] Organization info for Schema markup
@@ -129,9 +129,11 @@ export const siteConfig = {
     { label: "National Alliance on Mental Illness (NAMI)", url: "https://www.nami.org/" },
   ] as { label: string; url: string }[],
 
-  lemonSqueezy: {
-    productId: process.env.LEMONSQUEEZY_PRODUCT_ID ?? "",
-    variantId: process.env.LEMONSQUEEZY_VARIANT_ID ?? "",
+  paddle: {
+    projectSlug: process.env.PROJECT_SLUG ?? "founder-resilience",
+    priceId: process.env.PADDLE_PRICE_ID ?? "",
+    clientToken: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN ?? "",
+    sandbox: process.env.PADDLE_SANDBOX === "true",
   },
 };
 
