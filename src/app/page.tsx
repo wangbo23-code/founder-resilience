@@ -126,24 +126,18 @@ export default function HomePage() {
               <thead>
                 <tr className="bg-muted/50">
                   <th className="text-left py-3 px-4 font-semibold border-b">
-                    Feature
+                    vs.
                   </th>
                   <th className="text-left py-3 px-4 font-semibold border-b">
-                    {siteConfig.name}
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold border-b">
-                    Alternatives
+                    Why {siteConfig.name} Wins
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {siteConfig.differentiator.comparisons.map((c) => (
                   <tr key={c.vs} className="border-b">
-                    <td className="py-3 px-4 font-medium">{c.vs}</td>
-                    <td className="py-3 px-4 text-primary">{c.difference}</td>
-                    <td className="py-3 px-4 text-muted-foreground">
-                      {c.vs}
-                    </td>
+                    <td className="py-3 px-4 font-medium whitespace-nowrap">{c.vs}</td>
+                    <td className="py-3 px-4 text-muted-foreground">{c.difference}</td>
                   </tr>
                 ))}
               </tbody>

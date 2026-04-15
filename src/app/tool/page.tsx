@@ -72,6 +72,7 @@ function AssessmentForm() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ResilienceResult | null>(null);
+  const [error, setError] = useState("");
 
   // Form state
   const [crisisType, setCrisisType] = useState("");
@@ -84,6 +85,7 @@ function AssessmentForm() {
 
     setLoading(true);
     setResult(null);
+    setError("");
 
     try {
       // Consume a credit
@@ -95,7 +97,7 @@ function AssessmentForm() {
 
       if (!creditRes.ok) {
         const err = await creditRes.json();
-        alert(`Error: ${err.error}`);
+        setError(err.error || "Failed to use credit. Please try again.");
         setLoading(false);
         return;
       }
@@ -119,7 +121,7 @@ function AssessmentForm() {
       const data = await res.json();
       setResult(data);
     } catch (err) {
-      alert(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -136,6 +138,13 @@ function AssessmentForm() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="pt-4">
+            <p className="text-sm text-red-700">{error}</p>
+          </CardContent>
+        </Card>
+      )}
       {/* Crisis Details */}
       <Card>
         <CardHeader>
