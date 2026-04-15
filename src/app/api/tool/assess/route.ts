@@ -112,7 +112,13 @@ Create a compassionate, practical resilience plan that helps them cope with this
       .replace(/```\n?/g, "")
       .trim();
 
-    const assessment = JSON.parse(cleanText);
+    let assessment;
+    try {
+      assessment = JSON.parse(cleanText);
+    } catch {
+      console.error("Failed to parse AI JSON:", cleanText.slice(0, 500));
+      return NextResponse.json(generateFallbackAssessment(input));
+    }
     return NextResponse.json(assessment);
   } catch (err) {
     console.error("Assessment error:", err);
